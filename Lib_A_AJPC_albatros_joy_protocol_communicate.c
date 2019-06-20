@@ -8,6 +8,7 @@
 
 
 /*#### |Begin| --> Секция - "Include" ########################################*/
+#include "Lib_A_AJPC_albatros_joy_protocol_communicate.h"
 /*#### |End  | <-- Секция - "Include" ########################################*/
 
 

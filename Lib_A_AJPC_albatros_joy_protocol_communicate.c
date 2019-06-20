@@ -41,6 +41,18 @@ AJPC_SetJoyStatusPackage(
 
 	return (sizeof(ajpc_joy_status_pack_s));
 }
+
+uint8_t
+AJPC_SetVibroModePackage(
+	ajpc_vibro_mode_pack_s *pPack_s,
+	uint8_t vibroMode)
+{
+	pPack_s->startFrame = 0xAAAA;
+	pPack_s->vibroStatus = vibroMode;
+	pPack_s->crc = AJPC_GetCrcVibroModePack(pPack_s);
+
+	return (sizeof(ajpc_vibro_mode_pack_s));
+}
 /*#### |End  | <-- Секция - "Описание глобальных функций" ####################*/
 
 

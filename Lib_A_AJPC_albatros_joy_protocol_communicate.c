@@ -26,7 +26,7 @@
 
 /*#### |Begin| --> Секция - "Описание глобальных функций" ####################*/
 uint8_t
-AJPC_SetJoyStatusPackage(
+AJPC_JoyStatus_SetPack(
 	ajpc_joy_status_pack_s *pPack_s,
 	uint16_t *pJoyRollPitchADC,
 	uint8_t buttonPresEvents,
@@ -37,19 +37,19 @@ AJPC_SetJoyStatusPackage(
 	pPack_s->joyADC_a[0u] 		= *pJoyRollPitchADC++;
 	pPack_s->joyADC_a[1u] 		= *pJoyRollPitchADC;
 	pPack_s->buttonPresEvents 	= buttonPresEvents;
-	pPack_s->crc 				= AJPC_GetCrcJoyStatusPack(pPack_s);
+	pPack_s->crc 				= AJPC_JoyStatus_GetCrcPack(pPack_s);
 
 	return (sizeof(ajpc_joy_status_pack_s));
 }
 
 uint8_t
-AJPC_SetVibroModePackage(
+AJPC_VibtoMode_SetPack(
 	ajpc_vibro_mode_pack_s *pPack_s,
 	uint8_t vibroMode)
 {
 	pPack_s->startFrame = 0xAAAA;
 	pPack_s->vibroStatus = vibroMode;
-	pPack_s->crc = AJPC_GetCrcVibroModePack(pPack_s);
+	pPack_s->crc = AJPC_VibroMode_GetCrcPack(pPack_s);
 
 	return (sizeof(ajpc_vibro_mode_pack_s));
 }

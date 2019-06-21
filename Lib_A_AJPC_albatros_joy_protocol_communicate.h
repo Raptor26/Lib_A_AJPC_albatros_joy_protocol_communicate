@@ -113,35 +113,35 @@
 
 /* Key_Stop */
 #define AJPC_PRESS_Key_Stop_SET_POSITION            (0u)
-#define AJPC_PRESS_Key_Stop_SET_MASK                (1 << AJPC_PRESS_Key_Stop_SET_POSITION)
+#define AJPC_PRESS_Key_Stop_SET_MASK                ((uint8_t)(1 << AJPC_PRESS_Key_Stop_SET_POSITION))
 
 /* Key_Mode_manual */
 #define AJPC_PRESS_Key_Mode_manual_SET_POSITION     (1u)
-#define AJPC_PRESS_Key_Mode_manual_SET_MASK         (1 << AJPC_PRESS_Key_Mode_manual_SET_POSITION)
+#define AJPC_PRESS_Key_Mode_manual_SET_MASK         ((uint8_t)(1 << AJPC_PRESS_Key_Mode_manual_SET_POSITION))
 
 /* Key_Zoom */
 #define AJPC_PRESS_Key_Zoom_SET_POSITION            (2u)
-#define AJPC_PRESS_Key_Zoom_SET_MASK                (1 << AJPC_PRESS_Key_Zoom_SET_POSITION)
+#define AJPC_PRESS_Key_Zoom_SET_MASK                ((uint8_t)(1 << AJPC_PRESS_Key_Zoom_SET_POSITION))
 
 /* Key_Foto */
 #define AJPC_PRESS_Key_Foto_SET_POSITION            (3u)
-#define AJPC_PRESS_Key_Foto_SET_MASK                (1 << AJPC_PRESS_Key_Foto_SET_POSITION)
+#define AJPC_PRESS_Key_Foto_SET_MASK                ((uint8_t)(1 << AJPC_PRESS_Key_Foto_SET_POSITION))
 
 /* Key_Zoom+ */
 #define AJPC_PRESS_Key_Zoom_plus_SET_POSITION       (4u)
-#define AJPC_PRESS_Key_Zoom_plus_SET_MASK           (1 << AJPC_PRESS_Key_Zoom_plus_SET_POSITION)
+#define AJPC_PRESS_Key_Zoom_plus_SET_MASK           ((uint8_t)(1 << AJPC_PRESS_Key_Zoom_plus_SET_POSITION))
 
 /* Key_Up */
 #define AJPC_PRESS_Key_Up_SET_POSITION              (5u)
-#define AJPC_PRESS_Key_Up_SET_MASK                  (1 << AJPC_PRESS_Key_Up_SET_POSITION)
+#define AJPC_PRESS_Key_Up_SET_MASK                  ((uint8_t)(1 << AJPC_PRESS_Key_Up_SET_POSITION))
 
 /* Key_Down */
 #define AJPC_PRESS_Key_Down_SET_POSITION            (6u)
-#define AJPC_PRESS_Key_Down_SET_MASK                (1 << AJPC_PRESS_Key_Down_SET_POSITION)
+#define AJPC_PRESS_Key_Down_SET_MASK                ((uint8_t)(1 << AJPC_PRESS_Key_Down_SET_POSITION))
 
 /* Key_FotoOrHorizont */
 #define AJPC_PRESS_Key_FotoOrHorizont_SET_POSITION  (7u)
-#define AJPC_PRESS_Key_FotoOrHorizont_SET_MASK      (1 << AJPC_PRESS_Key_FotoOrHorizont_SET_POSITION)
+#define AJPC_PRESS_Key_FotoOrHorizont_SET_MASK      ((uint8_t)(1 << AJPC_PRESS_Key_FotoOrHorizont_SET_POSITION))
 /*#### |End  | <-- Секция - "Определение констант" ###########################*/
 
 
@@ -155,11 +155,11 @@ typedef enum
 
 typedef struct
 {
-	uint8_t startFrame;
-	uint8_t vibroStatus;
+	uint8_t  startFrame;
+	uint8_t  vibroStatus;
 	uint16_t joyADC_a[2u];
-	uint8_t buttonPresEvents;
-	uint8_t crc;
+	uint8_t  buttonPresEvents;
+	uint8_t  crc;
 }
 #if defined (__GNUC__)
 	__attribute__((__packed__))
@@ -171,8 +171,8 @@ ajpc_joy_status_pack_s;
 typedef struct
 {
 	uint16_t startFrame;
-	uint8_t vibroStatus;
-	uint8_t crc;
+	uint8_t  vibroStatus;
+	uint8_t  crc;
 }
 #if defined (__GNUC__)
 	__attribute__((__packed__))
@@ -188,8 +188,30 @@ ajpc_vibro_mode_pack_s;
 
 
 /*#### |Begin| --> Секция - "Прототипы глобальных функций" ###################*/
+
+/**
+ * @addtogroup Albatros Joystick
+ * @{
+ */
+
+/**
+ * @defgroup    Joystick status
+ * @brief       Библиотека содержит функции для работы со статусами джойстика
+ * @{
+ */
+
+/*-------------------------------------------------------------------------*//**
+ * @author    Mickle Isaev
+ * @date      21-июн-2019
+ *
+ * @brief     Функция возвращает контрольную сумму пакета данных
+ *
+ * @param[in]   *pJoyStausPack_s: Указатель на структуру, содержащую пакет данных
+ *
+ * @return    Контрольная сумма, рассчитанная через исключающее "ИЛИ"
+ */
 __AJPC_ALWAYS_INLINE uint8_t
-AJPC_GetCrcJoyStatusPack(
+AJPC_JoyStatus_GetCrcPack(
 	ajpc_joy_status_pack_s *pJoyStausPack_s)
 {
 	return (CRC_XOR_Crc8(
@@ -199,8 +221,94 @@ AJPC_GetCrcJoyStatusPack(
 				- sizeof(pJoyStausPack_s->crc)));
 }
 
+/*-------------------------------------------------------------------------*//**
+ * @author    Mickle Isaev
+ * @date      21-июн-2019
+ *
+ * @brief    Функция возвращает значения с АЦП малого джойстика
+ *
+ * @param[in]   *pJoyStausPack_s: Указатель на структуру, содержащую пакет данных
+ * @param[out]  *pRollPitch: Указатель на массив данных, куда будут 
+ *                           записаны измерения АЦП
+ * @return  None
+ */
+__AJPC_ALWAYS_INLINE void
+AJPC_JoyStatus_GetRollPitchADC(
+	ajpc_joy_status_pack_s *pJoyStausPack_s,
+	uint16_t *pRollPitch)
+{
+	pRollPitch[0u] = pJoyStausPack_s->joyADC_a[0u];
+	pRollPitch[1u] = pJoyStausPack_s->joyADC_a[1u];
+}
+
+/*-------------------------------------------------------------------------*//**
+ * @author    Mickle Isaev
+ * @date      21-июн-2019
+ *
+ * @brief    Функция возвращает байт данных, в котором содержится информация 
+ *           о том, какие кнопки джойстика были нажаты
+ *
+ * @param[in]   *pJoyStausPack_s: Указатель на структуру, содержащую пакет данных
+ *
+ * @return    байт данных, в котором каждый бит отвечает за статус 
+ *            соответствующей кнопки:
+ *             - AJPC_PRESS_Key_Stop_SET_MASK
+ *             - AJPC_PRESS_Key_Mode_manual_SET_MASK
+ *             - AJPC_PRESS_Key_Zoom_SET_MASK
+ *             - AJPC_PRESS_Key_Foto_SET_MASK
+ *             - AJPC_PRESS_Key_Zoom_plus_SET_MASK
+ *             - AJPC_PRESS_Key_Up_SET_MASK
+ *             - AJPC_PRESS_Key_Down_SET_MASK
+ *             - AJPC_PRESS_Key_FotoOrHorizont_SET_MASK
+ *
+ *             @see AJPC_PRESS_Key
+ */
 __AJPC_ALWAYS_INLINE uint8_t
-AJPC_GetCrcVibroModePack(
+AJPC_JoyStatus_GetButtonEvents(
+	ajpc_joy_status_pack_s *pJoyStausPack_s)
+{
+	return (pJoyStausPack_s->buttonPresEvents);
+}
+
+__AJPC_ALWAYS_INLINE size_t
+AJPC_JoyStatus_CheckPackValidation(
+	ajpc_joy_status_pack_s *pJoyStausPack_s)
+{
+	if (AJPC_JoyStatus_GetCrcPack(pJoyStausPack_s) == pJoyStausPack_s->crc)
+	{
+		return (1u);
+	}
+	else
+	{
+		return (0u);
+	}
+}
+
+extern uint8_t
+AJPC_JoyStatus_SetPack(
+  ajpc_joy_status_pack_s *pPack_s,
+  uint16_t *pJoyRollPitchADC,
+  uint8_t buttonPresEvents,
+  uint8_t vibroStatus);
+
+/**
+ * @defgroup    Joystick status
+ * @brief       Библиотека содержит функции для работы со статусами джойстика
+ * @}
+ */
+
+/*-------------------------------------------------------------------------*//**
+ * @author    Mickle Isaev
+ * @date      21-июн-2019
+ *
+ * @brief     Функция возвращает контрольную сумму пакета данных
+ *
+ * @param[in]   *pJoyStausPack_s: Указатель на структуру, содержащую пакет данных
+ *
+ * @return    Контрольная сумма, рассчитанная через исключающее "ИЛИ"
+ */
+__AJPC_ALWAYS_INLINE uint8_t
+AJPC_VibroMode_GetCrcPack(
 	ajpc_vibro_mode_pack_s *pJoyStausPack_s)
 {
 	return (CRC_XOR_Crc8(
@@ -209,34 +317,22 @@ AJPC_GetCrcVibroModePack(
 				- sizeof(pJoyStausPack_s->crc)));
 }
 
-__AJPC_ALWAYS_INLINE ajpc_vibro_status_e
-AJPC_GetVibroStatus(
-	ajpc_joy_status_pack_s *pJoyStausPack_s)
-{
-	return (pJoyStausPack_s->vibroStatus);
-}
-
-__AJPC_ALWAYS_INLINE void
-AJPC_GetJoyADC(
-	ajpc_joy_status_pack_s *pJoyStausPack_s,
-	uint16_t *pRollPitch)
-{
-	pRollPitch[0u] = pJoyStausPack_s->joyADC_a[0u];
-	pRollPitch[1u] = pJoyStausPack_s->joyADC_a[1u];
-}
-
-__AJPC_ALWAYS_INLINE uint8_t
-AJPC_GetButtonEvents(
-	ajpc_joy_status_pack_s *pJoyStausPack_s)
-{
-	return (pJoyStausPack_s->buttonPresEvents);
-}
-
+/*-------------------------------------------------------------------------*//**
+ * @author    Mickle Isaev
+ * @date      21-июн-2019
+ *
+ * @brief    Функция проверяет валидность пакета данных
+ *
+ * @param    pJoyStausPack_s    Радость Staus Pack S
+ *
+ * @return   Функция возвращает: 1u - если пакет данных валиден
+ *                               0u - если пакет данных не валиден
+ */
 __AJPC_ALWAYS_INLINE size_t
-AJPC_GetPackageValidation(
-	ajpc_joy_status_pack_s *pJoyStausPack_s)
+AJPC_VibroMode_CheckPackValidation(
+	ajpc_vibro_mode_pack_s *pJoyStausPack_s)
 {
-	if (AJPC_GetCrcJoyStatusPack(pJoyStausPack_s) == pJoyStausPack_s->crc)
+	if (AJPC_VibroMode_GetCrcPack(pJoyStausPack_s) == pJoyStausPack_s->crc)
 	{
 		return (1u);
 	}
@@ -247,37 +343,21 @@ AJPC_GetPackageValidation(
 }
 
 __AJPC_ALWAYS_INLINE size_t
-AJPC_GetVibroModePackageValidation(
-	ajpc_vibro_mode_pack_s *pJoyStausPack_s)
-{
-	if (AJPC_GetCrcVibroModePack(pJoyStausPack_s) == pJoyStausPack_s->crc)
-	{
-		return (1u);
-	}
-	else
-	{
-		return (0u);
-	}
-}
-
-__AJPC_ALWAYS_INLINE size_t
-AJPC_GetVibroModen(
+AJPC_VibroMode_GetVibroMode(
 	ajpc_vibro_mode_pack_s *pJoyStausPack_s)
 {
 	return (pJoyStausPack_s->vibroStatus);
 }
 
 extern uint8_t
-AJPC_SetJoyStatusPackage(
-	ajpc_joy_status_pack_s *pPack_s,
-	uint16_t *pJoyRollPitchADC,
-	uint8_t buttonPresEvents,
-	uint8_t vibroStatus);
-
-extern uint8_t
-AJPC_SetVibroModePackage(
+AJPC_VibtoMode_SetPack(
 	ajpc_vibro_mode_pack_s *pPack_s,
 	uint8_t vibroMode);
+
+/**
+ * @addtogroup Albatros Joystick
+ * @}
+ */
 /*#### |End  | <-- Секция - "Прототипы глобальных функций" ###################*/
 
 

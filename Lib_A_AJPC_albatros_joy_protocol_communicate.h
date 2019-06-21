@@ -110,6 +110,38 @@
 	#endif
 #endif
 /*==== |End| --> Секция - Локальная оптимизация функций ======================*/
+
+/* Key_Stop */
+#define AJPC_PRESS_Key_Stop_SET_POSITION            (0u)
+#define AJPC_PRESS_Key_Stop_SET_MASK                (1 << AJPC_PRESS_Key_Stop_SET_POSITION)
+
+/* Key_Mode_manual */
+#define AJPC_PRESS_Key_Mode_manual_SET_POSITION     (1u)
+#define AJPC_PRESS_Key_Mode_manual_SET_MASK         (1 << AJPC_PRESS_Key_Mode_manual_SET_POSITION)
+
+/* Key_Zoom */
+#define AJPC_PRESS_Key_Zoom_SET_POSITION            (2u)
+#define AJPC_PRESS_Key_Zoom_SET_MASK                (1 << AJPC_PRESS_Key_Zoom_SET_POSITION)
+
+/* Key_Foto */
+#define AJPC_PRESS_Key_Foto_SET_POSITION            (3u)
+#define AJPC_PRESS_Key_Foto_SET_MASK                (1 << AJPC_PRESS_Key_Foto_SET_POSITION)
+
+/* Key_Zoom+ */
+#define AJPC_PRESS_Key_Zoom_plus_SET_POSITION       (4u)
+#define AJPC_PRESS_Key_Zoom_plus_SET_MASK           (1 << AJPC_PRESS_Key_Zoom_plus_SET_POSITION)
+
+/* Key_Up */
+#define AJPC_PRESS_Key_Up_SET_POSITION              (5u)
+#define AJPC_PRESS_Key_Up_SET_MASK                  (1 << AJPC_PRESS_Key_Up_SET_POSITION)
+
+/* Key_Down */
+#define AJPC_PRESS_Key_Down_SET_POSITION            (6u)
+#define AJPC_PRESS_Key_Down_SET_MASK                (1 << AJPC_PRESS_Key_Down_SET_POSITION)
+
+/* Key_FotoOrHorizont */
+#define AJPC_PRESS_Key_FotoOrHorizont_SET_POSITION  (7u)
+#define AJPC_PRESS_Key_FotoOrHorizont_SET_MASK      (1 << AJPC_PRESS_Key_FotoOrHorizont_SET_POSITION)
 /*#### |End  | <-- Секция - "Определение констант" ###########################*/
 
 
@@ -193,9 +225,16 @@ AJPC_GetJoyADC(
 	pRollPitch[1u] = pJoyStausPack_s->joyADC_a[1u];
 }
 
+__AJPC_ALWAYS_INLINE uint8_t
+AJPC_GetButtonEvents(
+	ajpc_joy_status_pack_s *pJoyStausPack_s)
+{
+	return (pJoyStausPack_s->buttonPresEvents);
+}
+
 __AJPC_ALWAYS_INLINE size_t
 AJPC_GetPackageValidation(
-		ajpc_joy_status_pack_s *pJoyStausPack_s)
+	ajpc_joy_status_pack_s *pJoyStausPack_s)
 {
 	if (AJPC_GetCrcJoyStatusPack(pJoyStausPack_s) == pJoyStausPack_s->crc)
 	{
@@ -209,7 +248,7 @@ AJPC_GetPackageValidation(
 
 __AJPC_ALWAYS_INLINE size_t
 AJPC_GetVibroModePackageValidation(
-		ajpc_vibro_mode_pack_s *pJoyStausPack_s)
+	ajpc_vibro_mode_pack_s *pJoyStausPack_s)
 {
 	if (AJPC_GetCrcVibroModePack(pJoyStausPack_s) == pJoyStausPack_s->crc)
 	{
@@ -223,7 +262,7 @@ AJPC_GetVibroModePackageValidation(
 
 __AJPC_ALWAYS_INLINE size_t
 AJPC_GetVibroModen(
-		ajpc_vibro_mode_pack_s *pJoyStausPack_s)
+	ajpc_vibro_mode_pack_s *pJoyStausPack_s)
 {
 	return (pJoyStausPack_s->vibroStatus);
 }

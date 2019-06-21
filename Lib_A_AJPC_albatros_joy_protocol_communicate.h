@@ -225,10 +225,35 @@ AJPC_JoyStatus_GetCrcPack(
  * @author    Mickle Isaev
  * @date      21-июн-2019
  *
+ * @brief    Функция проверяет валидность пакета данных
+ *
+ * @param    pJoyStausPack_s    Радость Staus Pack S
+ *
+ * @return   Функция возвращает: 1u - если пакет данных валиден
+ *                               0u - если пакет данных не валиден
+ */
+__AJPC_ALWAYS_INLINE size_t
+AJPC_JoyStatus_CheckPackValidation(
+	ajpc_joy_status_pack_s *pJoyStausPack_s)
+{
+	if (AJPC_JoyStatus_GetCrcPack(pJoyStausPack_s) == pJoyStausPack_s->crc)
+	{
+		return (1u);
+	}
+	else
+	{
+		return (0u);
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * @author    Mickle Isaev
+ * @date      21-июн-2019
+ *
  * @brief    Функция возвращает значения с АЦП малого джойстика
  *
  * @param[in]   *pJoyStausPack_s: Указатель на структуру, содержащую пакет данных
- * @param[out]  *pRollPitch: Указатель на массив данных, куда будут 
+ * @param[out]  *pRollPitch: Указатель на массив данных, куда будут
  *                           записаны измерения АЦП
  * @return  None
  */
@@ -245,12 +270,12 @@ AJPC_JoyStatus_GetRollPitchADC(
  * @author    Mickle Isaev
  * @date      21-июн-2019
  *
- * @brief    Функция возвращает байт данных, в котором содержится информация 
+ * @brief    Функция возвращает байт данных, в котором содержится информация
  *           о том, какие кнопки джойстика были нажаты
  *
  * @param[in]   *pJoyStausPack_s: Указатель на структуру, содержащую пакет данных
  *
- * @return    байт данных, в котором каждый бит отвечает за статус 
+ * @return    байт данных, в котором каждый бит отвечает за статус
  *            соответствующей кнопки:
  *             - AJPC_PRESS_Key_Stop_SET_MASK
  *             - AJPC_PRESS_Key_Mode_manual_SET_MASK
@@ -270,26 +295,12 @@ AJPC_JoyStatus_GetButtonEvents(
 	return (pJoyStausPack_s->buttonPresEvents);
 }
 
-__AJPC_ALWAYS_INLINE size_t
-AJPC_JoyStatus_CheckPackValidation(
-	ajpc_joy_status_pack_s *pJoyStausPack_s)
-{
-	if (AJPC_JoyStatus_GetCrcPack(pJoyStausPack_s) == pJoyStausPack_s->crc)
-	{
-		return (1u);
-	}
-	else
-	{
-		return (0u);
-	}
-}
-
 extern uint8_t
 AJPC_JoyStatus_SetPack(
-  ajpc_joy_status_pack_s *pPack_s,
-  uint16_t *pJoyRollPitchADC,
-  uint8_t buttonPresEvents,
-  uint8_t vibroStatus);
+	ajpc_joy_status_pack_s *pVibroModePack_s,
+	uint16_t *pJoyRollPitchADC,
+	uint8_t buttonPresEvents,
+	uint8_t vibroStatus);
 
 /**
  * @defgroup    Joystick status
@@ -309,12 +320,12 @@ AJPC_JoyStatus_SetPack(
  */
 __AJPC_ALWAYS_INLINE uint8_t
 AJPC_VibroMode_GetCrcPack(
-	ajpc_vibro_mode_pack_s *pJoyStausPack_s)
+	ajpc_vibro_mode_pack_s *pVibroModePack_s)
 {
 	return (CRC_XOR_Crc8(
-				(uint8_t*) &pJoyStausPack_s,
+				(uint8_t*) &pVibroModePack_s,
 				sizeof(ajpc_vibro_mode_pack_s)
-				- sizeof(pJoyStausPack_s->crc)));
+				- sizeof(pVibroModePack_s->crc)));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -330,9 +341,9 @@ AJPC_VibroMode_GetCrcPack(
  */
 __AJPC_ALWAYS_INLINE size_t
 AJPC_VibroMode_CheckPackValidation(
-	ajpc_vibro_mode_pack_s *pJoyStausPack_s)
+	ajpc_vibro_mode_pack_s *pVibroModePack_s)
 {
-	if (AJPC_VibroMode_GetCrcPack(pJoyStausPack_s) == pJoyStausPack_s->crc)
+	if (AJPC_VibroMode_GetCrcPack(pVibroModePack_s) == pVibroModePack_s->crc)
 	{
 		return (1u);
 	}
@@ -344,14 +355,14 @@ AJPC_VibroMode_CheckPackValidation(
 
 __AJPC_ALWAYS_INLINE size_t
 AJPC_VibroMode_GetVibroMode(
-	ajpc_vibro_mode_pack_s *pJoyStausPack_s)
+	ajpc_vibro_mode_pack_s *pVibroModePack_s)
 {
-	return (pJoyStausPack_s->vibroStatus);
+	return (pVibroModePack_s->vibroStatus);
 }
 
 extern uint8_t
 AJPC_VibtoMode_SetPack(
-	ajpc_vibro_mode_pack_s *pPack_s,
+	ajpc_vibro_mode_pack_s *pVibroModePack_s,
 	uint8_t vibroMode);
 
 /**

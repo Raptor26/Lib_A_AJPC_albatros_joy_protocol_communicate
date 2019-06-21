@@ -44,12 +44,12 @@ AJPC_JoyStatus_SetPack(
 
 uint8_t
 AJPC_VibtoMode_SetPack(
-	ajpc_vibro_mode_pack_s *pPack_s,
+	ajpc_vibro_mode_pack_s *pVibroModePack_s,
 	uint8_t vibroMode)
 {
-	pPack_s->startFrame = 0xAAAA;
-	pPack_s->vibroStatus = vibroMode;
-	pPack_s->crc = AJPC_VibroMode_GetCrcPack(pPack_s);
+	pVibroModePack_s->startFrame 	= 0xAAAA;
+	pVibroModePack_s->vibroStatus 	= vibroMode;
+	pVibroModePack_s->crc 			= AJPC_VibroMode_GetCrcPack(pVibroModePack_s);
 
 	return (sizeof(ajpc_vibro_mode_pack_s));
 }
